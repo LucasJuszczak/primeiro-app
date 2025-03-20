@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -10,13 +10,23 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('novarota')
+/* @Get('novarota')
   getNewRoute(){
-    return "New route here!"
+    return "Aqui é uma nova rota!"
   }
 
   @Post('novarota')
   createRoute(){
-    return "Create a new route here!"
+    return "Aqui cria-se uma nova rota!"
   }
+
+  @Patch('novarota')
+  updateRoute(){
+    return "Atualizando a rota!"
+  }
+
+  @Delete('novarota')
+  deleteRoute(){
+    return "Deletando a rota!"
+  } */
 }
