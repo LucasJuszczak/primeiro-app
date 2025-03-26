@@ -1,7 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { Task } from './entities/task.entity';
 
 @Injectable()
 export class TasksService {
+    //Lista em memória para teste!
+    private tasks: Task[] = [
+        {
+            id: 1,
+            name: "NestJS",
+            description: "First task",
+            completed: false
+        }
+    ]
 
     findAll(){
         return [
