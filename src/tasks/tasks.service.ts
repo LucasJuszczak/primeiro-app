@@ -14,24 +14,24 @@ export class TasksService {
     ]
 
     findAll(){
-        return [
-            {
-                id : 1,
-                name: "Aprendendo NestJS"
-            },
-            {
-                id : 2,
-                name: "Estudando NestJS"
-            }
-        ]
+        return this.tasks
     }
 
     findOne(id: string){
-        return "Tarefa de id: " + id
+        return this.tasks.find(task => task.id === Number(id))
     }
 
     create(body: any){
-        return body
+        const newId = this.tasks.length + 1
+
+        const newTask = {
+            id: newId,
+            ...body
+        }
+
+        this.tasks.push(newTask)
+
+        return newTask
     }
 
     update(id: string, body: any){
