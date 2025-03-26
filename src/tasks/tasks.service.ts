@@ -7,22 +7,28 @@ export class TasksService {
         return [
             {
                 id : 1,
-                task: "Aprendendo NestJS"
+                name: "Aprendendo NestJS"
             },
             {
                 id : 2,
-                task: "Estudando NestJS"
+                name: "Estudando NestJS"
             }
         ]
     }
 
-    findOne(){
-        return "Retornando apenas uma tarefa!"
+    findOne(id: string){
+        return "Tarefa de id: " + id
     }
 
-//    create()
+    create(body: any){
+        return body
+    }
 
-//    update()
+    update(id: string, body: any){
+        return "Atualizando o id " + id
+    }
 
-//    remove()
+    remove(id: string){
+        return "Deletando o id " + id
+    }
 }
