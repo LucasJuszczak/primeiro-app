@@ -41,19 +41,27 @@ export class TasksService {
     update(id: string, body: any){
         const taskIndex = this.tasks.findIndex(task => task.id === Number(id))
 
-        if(taskIndex >= 0){
-            const taskItem = this.tasks[taskIndex]
+        if(taskIndex < 0)
+            throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
 
-            this.tasks[taskIndex] = {
-                ...taskItem,
-                ...body
-            }
+        const taskItem = this.tasks[taskIndex]
+
+        this.tasks[taskIndex] = {
+            ...taskItem,
+            ...body
         }
 
         return "Updated Task!"
     }
 
     remove(id: string){
-        return "Deletando o id " + id
+        const taskIndex = this.tasks.findIndex(task => task.id === Number(id))
+
+        if(taskIndex < 0)
+            throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
+
+        this.tasks.splice(taskIndex, 1)
+
+        return "Deleted Task!!"
     }
 }
