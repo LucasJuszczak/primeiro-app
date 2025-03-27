@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Task } from './entities/task.entity';
 
 @Injectable()
@@ -18,7 +18,11 @@ export class TasksService {
     }
 
     findOne(id: string){
-        return this.tasks.find(task => task.id === Number(id))
+        const task = this.tasks.find(task => task.id === Number(id))
+
+        if(task) return task
+
+        throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
     }
 
     create(body: any){
