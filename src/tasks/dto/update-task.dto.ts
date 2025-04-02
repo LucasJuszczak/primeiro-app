@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator"
+import { IsBoolean, IsOptional } from "class-validator"
 import { CreateTaskDto } from "./create-task.dto"
 import { PartialType } from "@nestjs/mapped-types"
 
