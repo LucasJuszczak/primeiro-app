@@ -9,8 +9,7 @@ export class GuestsController {
     constructor(private readonly guestsService: GuestsService) {}
 
     @Get()
-    findAllGuests(@Query('limit') limit: string){
-        console.log(limit)
+    findAllGuests(){
         return this.guestsService.findAll()
     }
 

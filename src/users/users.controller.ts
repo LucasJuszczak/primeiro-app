@@ -9,8 +9,7 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Get()
-    findAllUsers(@Query('limit') limit: string){
-        console.log(limit)
+    findAllUsers(){
         return this.usersService.findAll()
     }
 

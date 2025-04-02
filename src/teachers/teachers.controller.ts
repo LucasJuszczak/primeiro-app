@@ -8,8 +8,7 @@ export class TeachersController {
     constructor(private readonly teachersService: TeachersService) {}
 
     @Get()
-    findAllTeachers(@Query('limit') limit: string){
-        console.log(limit)
+    findAllTeachers(){
         return this.teachersService.findAll()
     }
 
