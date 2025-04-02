@@ -5,12 +5,11 @@ import { UpdateGuestDto } from './dto/update-guest.dto';
 
 @Injectable()
 export class GuestsService {
-    //Lista em memória para teste!
     private guests: Guest[] = [
         {
             id: 1,
             name: "Denji",
-            email: "denji@email.com",
+            email: "guest.denji@email.com",
             presence: false
         }
     ]
