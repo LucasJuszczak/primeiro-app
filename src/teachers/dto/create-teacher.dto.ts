@@ -1,19 +1,19 @@
 import { Contains, IsEmail, IsNotEmpty, IsString, MaxLength } from "class-validator"
 
 export class CreateTeacherDto{
-    @IsString({message:"O campo do nome precisa ser um texto!"})
-    @IsNotEmpty({message:"O campo do nome não pode ser vazio!"})
-    @MaxLength(40, {message:"O campo do nome precisa ter no máximo 40 caracteres!"})
+    @IsString({message:"The name field must be text!"})
+    @IsNotEmpty({message:"The name field can't be empty!"})
+    @MaxLength(40, {message:"The name field must have a maximum of 40 characters!"})
     readonly name: string
 
-    @IsString({message:"O campo da matrícula precisa ser um texto!"})
-    @IsNotEmpty({message:"O campo da matrícula não pode ser vazio!"})
-    @MaxLength(25, {message:"O campo da matrícula precisa ter no máximo 25 caracteres!"})
+    @IsString({message:"The registration field must be text!"})
+    @IsNotEmpty({message:"The registration field can't be empty!"})
+    @MaxLength(25, {message:"The registration field must have a maximum of 25 characters!"})
     readonly registration: string
 
     @IsEmail()
-    @IsString({message:"O campo de email precisa ser um texto!"})
-    @IsNotEmpty({message:"O campo de email não pode ser vazio!"})
-    @MaxLength(40, {message:"O campo de email precisa ter no máximo 40 caracteres!"})
+    @IsString({message:"The email field must be text!"})
+    @IsNotEmpty({message:"The email field can't be empty!"})
+    @MaxLength(40, {message:"The email field must have a maximum of 40 characters!"})
     readonly email: string
 }

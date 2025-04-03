@@ -8,13 +8,13 @@ uma determinada camada aceita e trabalha
 import { IsNotEmpty, IsString, MaxLength } from "class-validator"
 
 export class CreateTaskDto{
-    @IsString({message:"O campo do nome precisa ser um texto!"})
-    @IsNotEmpty({message:"O campo do nome não pode ser vazio!"})
-    @MaxLength(40, {message:"O campo do nome precisa ter no máximo 40 caracteres!"})
+    @IsString({message:"The name field must be text!"})
+    @IsNotEmpty({message:"The name field can't be empty!"})
+    @MaxLength(40, {message:"The name field must have a maximum of 40 characters!"})
     readonly name: string
 
-    @IsString({message:"O campo de descrição precisa ser um texto!"})
-    @IsNotEmpty({message:"O campo de descrição não pode ser vazia!"})
-    @MaxLength(200, {message:"O campo de descrição precisa ter no máximo 200 caracteres!"})
+    @IsString({message:"The description field must be text!"})
+    @IsNotEmpty({message:"The description field can't be empty!"})
+    @MaxLength(200, {message:"The description field must be a maximum of 200 characters!"})
     readonly description: string
 }
