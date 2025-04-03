@@ -5,17 +5,16 @@ Objetivo: Validar dados, transformar.
 uma determinada camada aceita e trabalha
 */
 
-import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator"
+import { IsNotEmpty, IsString, MaxLength } from "class-validator"
 
 export class CreateTaskDto{
-    @IsString({message:"O nome precisa ser um texto!"})
-    @IsNotEmpty({message:"O nome não pode ser vazio!"})
-    @MinLength(5, {message:"O nome precisa ter no mínimo 5 caracteres!"})
-    @MaxLength(40, {message:"O nome precisa ter no máximo 40 caracteres!"})
+    @IsString({message:"O campo do nome precisa ser um texto!"})
+    @IsNotEmpty({message:"O campo do nome não pode ser vazio!"})
+    @MaxLength(40, {message:"O campo do nome precisa ter no máximo 40 caracteres!"})
     readonly name: string
 
-    @IsString({message:"A descrição precisa ser um texto!"})
-    @IsNotEmpty({message:"A descrição não pode ser vazia!"})
-    @MaxLength(200, {message:"A descrição precisa ter no máximo 200 caracteres!"})
+    @IsString({message:"O campo de descrição precisa ser um texto!"})
+    @IsNotEmpty({message:"O campo de descrição não pode ser vazia!"})
+    @MaxLength(200, {message:"O campo de descrição precisa ter no máximo 200 caracteres!"})
     readonly description: string
 }

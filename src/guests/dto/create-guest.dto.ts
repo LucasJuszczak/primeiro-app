@@ -1,14 +1,14 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator"
+import { IsEmail, IsNotEmpty, IsString, MaxLength } from "class-validator"
 
 export class CreateGuestDto{
-    @IsString({message:"O nome precisa ser um texto!"})
-    @IsNotEmpty({message:"O nome não pode ser vazio!"})
-    @MinLength(5, {message:"O nome precisa ter no mínimo 5 caracteres!"})
-    @MaxLength(40, {message:"O nome precisa ter no máximo 40 caracteres!"})
+    @IsString({message:"O campo do nome precisa ser um texto!"})
+    @IsNotEmpty({message:"O campo do nome não pode ser vazio!"})
+    @MaxLength(40, {message:"O campo do nome precisa ter no máximo 40 caracteres!"})
     readonly name: string
 
-    @IsString({message:"O email precisa ser um texto!"})
-    @IsNotEmpty({message:"O email não pode ser vazio!"})
-    @MaxLength(40, {message:"O email precisa ter no máximo 40 caracteres!"})
+    @IsEmail()
+    @IsString({message:"O campo de email precisa ser um texto!"})
+    @IsNotEmpty({message:"O campo de email não pode ser vazio!"})
+    @MaxLength(40, {message:"O campo de email precisa ter no máximo 40 caracteres!"})
     readonly email: string
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
 import { GuestsService } from "./guests.service";
 import { CreateGuestDto } from "./dto/create-guest.dto";
 import { UpdateGuestDto } from "./dto/update-guest.dto";
@@ -14,7 +14,7 @@ export class GuestsController {
     }
 
     @Get(':id')
-    findOneGuest(@Param('id') id: string){
+    findOneGuest(@Param('id', ParseIntPipe) id: number){
         return this.guestsService.findOne(id)
     }
 
@@ -24,12 +24,12 @@ export class GuestsController {
     }
 
     @Patch(':id')
-    updateGuest(@Param('id') id: string, @Body() updateGuestDto: UpdateGuestDto){
+    updateGuest(@Param('id', ParseIntPipe) id: number, @Body() updateGuestDto: UpdateGuestDto){
         return this.guestsService.update(id, updateGuestDto)
     }
 
     @Delete(':id')
-    removeGuest(@Param('id') id: string){
+    removeGuest(@Param('id') id: number){
         return this.guestsService.remove(id)
     }
 }
