@@ -29,7 +29,7 @@ export class GuestsController {
     }
 
     @Delete(':id')
-    removeGuest(@Param('id') id: number){
+    removeGuest(@Param('id', ParseIntPipe) id: number){
         return this.guestsService.remove(id)
     }
 }

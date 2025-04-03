@@ -28,7 +28,7 @@ export class TeachersController {
     }
 
     @Delete(':id')
-    removeTeacher(@Param('id') id: number){
+    removeTeacher(@Param('id', ParseIntPipe) id: number){
         return this.teachersService.remove(id)
     }
 }
