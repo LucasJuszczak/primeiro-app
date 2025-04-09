@@ -1,70 +1,96 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Task } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class TasksService {
-    //Lista em memória para teste!
-    private tasks: Task[] = [
-        {
-            id: 1,
-            name: "NestJS",
-            description: "First task",
-            completed: false
-        }
-    ]
 
-    findAll(){
-        return this.tasks
+    constructor(private readonly prismaService: PrismaService){}
+
+    async findAll(paginationDto: PaginationDto){
+        const {limit = 10, offset = 0} = paginationDto
+
+        const allTasks = await this.prismaService.task.findMany({
+            take:limit,
+            skip: offset,
+            orderBy:{
+                created: 'desc'
+            }
+        })
+        return allTasks
     }
 
-    findOne(id: number){
-        const task = this.tasks.find(task => task.id === id)
+    async findOne(id: number){
+        const task = await this.prismaService.task.findFirst({
+            where: {
+                id: id
+            }
+        })
 
-        if(task) return task
+        if(task?.name) return task
 
         throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
     }
 
-    create(createTaskDto: CreateTaskDto){
-        const newId = this.tasks.length + 1
-
-        const newTask = {
-            id: newId,
-            ...createTaskDto,
-            completed: false
+    async create(createTaskDto: CreateTaskDto){
+        try{
+            const newTask = await this.prismaService.task.create({
+                data: {
+                    name: createTaskDto.name,
+                    description: createTaskDto.description,
+                    completed: false
+                }
+            })
+            return newTask
+        }catch(e){
+            throw new HttpException("Unable to create task!", HttpStatus.BAD_REQUEST)
         }
-
-        this.tasks.push(newTask)
-
-        return newTask
     }
 
-    update(id: number, updateTaskDto: UpdateTaskDto){
-        const taskIndex = this.tasks.findIndex(task => task.id === id)
+    async update(id: number, updateTaskDto: UpdateTaskDto){
+        try{
+            const findTask = await this.prismaService.task.findFirst({
+                where: {
+                    id: id
+                }
+            })
 
-        if(taskIndex < 0)
-            throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
+            if (!findTask)
+                throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
 
-        const taskItem = this.tasks[taskIndex]
-
-        this.tasks[taskIndex] = {
-            ...taskItem,
-            ...updateTaskDto
+            const task = await this.prismaService.task.update({
+                where: {
+                    id: findTask.id
+                },
+                data: updateTaskDto
+            })
+            return task
+        } catch(e){
+            throw new HttpException("Unable to update task!", HttpStatus.BAD_REQUEST)
         }
-
-        return "Updated Task!"
     }
 
-    remove(id: number){
-        const taskIndex = this.tasks.findIndex(task => task.id === id)
+    async delete(id: number){
+        try{
+            const findTask = await this.prismaService.task.findFirst({
+                where: {
+                    id: id
+                }
+            })
 
-        if(taskIndex < 0)
-            throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
+            if(!findTask)
+                throw new HttpException("This task doesn't exist!", HttpStatus.NOT_FOUND)
 
-        this.tasks.splice(taskIndex, 1)
-
-        return "Deleted Task!!"
+            await this.prismaService.task.delete({
+                where: {
+                    id: findTask.id
+                }
+            })
+            return "Deleted task sucessfully!"
+        } catch(e){
+            throw new HttpException("Unable to delete task!", HttpStatus.BAD_REQUEST)
+        }
     }
 }
