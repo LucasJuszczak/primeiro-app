@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 
 @Controller('users')
@@ -9,8 +10,8 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Get()
-    findAllUsers(){
-        return this.usersService.findAll()
+    findAllUsers(@Query() paginationDto: PaginationDto){
+        return this.usersService.findAll(paginationDto)
     }
 
     @Get(':id')
@@ -30,6 +31,6 @@ export class UsersController {
 
     @Delete(':id')
     removeUser(@Param('id', ParseIntPipe) id: number){
-        return this.usersService.remove(id)
+        return this.usersService.delete(id)
     }
 }

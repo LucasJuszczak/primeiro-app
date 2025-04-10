@@ -2,67 +2,96 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Teacher } from './entities/teacher.entity';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class TeachersService {
-    private teachers: Teacher[] = [
-        {
-            id: 1,
-            name: "Kishibe",
-            registration: "0123456789",
-            email: "teacher.kishibe@email.com"
-        }
-    ]
 
-    findAll(){
-        return this.teachers
+    constructor(private readonly prismaService: PrismaService){}
+
+    async findAll(paginationDto: PaginationDto){
+        const {limit = 10, offset = 0} = paginationDto
+
+        const allTeachers = await this.prismaService.teacher.findMany({
+            take:limit,
+            skip: offset,
+            orderBy:{
+                created: 'desc'
+            }
+        })
+        return allTeachers
     }
 
-    findOne(id: number){
-        const teacher = this.teachers.find(teacher => teacher.id === id)
+    async findOne(id: number){
+        const teacher = await this.prismaService.teacher.findFirst({
+            where: {
+                id: id
+            }
+        })
 
-        if(teacher) return teacher
+        if(teacher?.name) return teacher
 
         throw new HttpException("This teacher doesn't exist!", HttpStatus.NOT_FOUND)
     }
 
-    create(createTeacherDto: CreateTeacherDto){
-        const newId = this.teachers.length + 1
-
-        const newTeacher = {
-            id: newId,
-            ...createTeacherDto,
+    async create(createTeacherDto: CreateTeacherDto){
+        try{
+            const newTeacher = await this.prismaService.teacher.create({
+                data: {
+                    name: createTeacherDto.name,
+                    registration: createTeacherDto.registration,
+                    email: createTeacherDto.email
+                }
+            })
+            return newTeacher
+        }catch(e){
+            throw new HttpException("Unable to create teacher!", HttpStatus.BAD_REQUEST)
         }
-
-        this.teachers.push(newTeacher)
-
-        return newTeacher
     }
 
-    update(id: number, updateTeacherDto: UpdateTeacherDto){
-        const teacherIndex = this.teachers.findIndex(teacher => teacher.id === id)
+    async update(id: number, updateTeacherDto: UpdateTeacherDto){
+        try{
+            const findTeacher = await this.prismaService.teacher.findFirst({
+                where: {
+                    id: id
+                }
+            })
 
-        if(teacherIndex < 0)
-            throw new HttpException("This teacher doesn't exist!", HttpStatus.NOT_FOUND)
+            if (!findTeacher)
+                throw new HttpException("This teacher doesn't exist!", HttpStatus.NOT_FOUND)
 
-        const teacherItem = this.teachers[teacherIndex]
-
-        this.teachers[teacherIndex] = {
-            ...teacherItem,
-            ...updateTeacherDto
+            const teacher = await this.prismaService.teacher.update({
+                where: {
+                    id: findTeacher.id
+                },
+                data: updateTeacherDto
+            })
+            return teacher
+        } catch(e){
+            throw new HttpException("Unable to update teacher!", HttpStatus.BAD_REQUEST)
         }
-
-        return "Updated Teacher!"
     }
 
-    remove(id: number){
-        const teacherIndex = this.teachers.findIndex(teacher => teacher.id === id)
+    async delete(id: number){
+        try{
+            const findTeacher = await this.prismaService.teacher.findFirst({
+                where: {
+                    id: id
+                }
+            })
 
-        if(teacherIndex < 0)
-            throw new HttpException("This teacher doesn't exist!", HttpStatus.NOT_FOUND)
+            if(!findTeacher)
+                throw new HttpException("This teacher doesn't exist!", HttpStatus.NOT_FOUND)
 
-        this.teachers.splice(teacherIndex, 1)
-
-        return "Deleted Teacher!!"
+            await this.prismaService.teacher.delete({
+                where: {
+                    id: findTeacher.id
+                }
+            })
+            return "Deleted teacher sucessfully!"
+        } catch(e){
+            throw new HttpException("Unable to delete teacher!", HttpStatus.BAD_REQUEST)
+        }
     }
 }

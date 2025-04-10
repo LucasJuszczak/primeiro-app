@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query 
 import { GuestsService } from "./guests.service";
 import { CreateGuestDto } from "./dto/create-guest.dto";
 import { UpdateGuestDto } from "./dto/update-guest.dto";
+import { PaginationDto } from "src/common/dto/pagination.dto";
 
 
 @Controller('guests')
@@ -9,8 +10,8 @@ export class GuestsController {
     constructor(private readonly guestsService: GuestsService) {}
 
     @Get()
-    findAllGuests(){
-        return this.guestsService.findAll()
+    findAllGuests(@Query() paginationDto: PaginationDto){
+        return this.guestsService.findAll(paginationDto)
     }
 
     @Get(':id')
@@ -30,6 +31,6 @@ export class GuestsController {
 
     @Delete(':id')
     removeGuest(@Param('id', ParseIntPipe) id: number){
-        return this.guestsService.remove(id)
+        return this.guestsService.delete(id)
     }
 }

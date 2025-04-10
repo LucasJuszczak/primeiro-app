@@ -4,4 +4,5 @@ export class Teacher{
     name: string
     registration: string
     email: string
+    created?: Date
 }

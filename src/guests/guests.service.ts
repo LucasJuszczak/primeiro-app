@@ -1,69 +1,96 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Guest } from './entities/guest.entity';
 import { CreateGuestDto } from './dto/create-guest.dto';
 import { UpdateGuestDto } from './dto/update-guest.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class GuestsService {
-    private guests: Guest[] = [
-        {
-            id: 1,
-            name: "Denji",
-            email: "guest.denji@email.com",
-            presence: false
-        }
-    ]
 
-    findAll(){
-        return this.guests
+    constructor(private readonly prismaService: PrismaService){}
+
+    async findAll(paginationDto: PaginationDto){
+        const {limit = 10, offset = 0} = paginationDto
+
+        const allGuests = await this.prismaService.guest.findMany({
+            take:limit,
+            skip: offset,
+            orderBy:{
+                created: 'desc'
+            }
+        })
+        return allGuests
     }
 
-    findOne(id: number){
-        const guest = this.guests.find(guest => guest.id === id)
+    async findOne(id: number){
+        const guest = await this.prismaService.guest.findFirst({
+            where: {
+                id: id
+            }
+        })
 
-        if(guest) return guest
+        if(guest?.name) return guest
 
         throw new HttpException("This guest doesn't exist!", HttpStatus.NOT_FOUND)
     }
 
-    create(createGuestDto: CreateGuestDto){
-        const newId = this.guests.length + 1
-
-        const newGuest = {
-            id: newId,
-            ...createGuestDto,
-            presence: false
+    async create(createGuestDto: CreateGuestDto){
+        try{
+            const newGuest = await this.prismaService.guest.create({
+                data: {
+                    name: createGuestDto.name,
+                    email: createGuestDto.email,
+                    presence: false
+                }
+            })
+            return newGuest
+        }catch(e){
+            throw new HttpException("Unable to create guest!", HttpStatus.BAD_REQUEST)
         }
-
-        this.guests.push(newGuest)
-
-        return newGuest
     }
 
-    update(id: number, updateGuestDto: UpdateGuestDto){
-        const guestIndex = this.guests.findIndex(guest => guest.id === id)
+    async update(id: number, updateGuestDto: UpdateGuestDto){
+        try{
+            const findGuest = await this.prismaService.guest.findFirst({
+                where: {
+                    id: id
+                }
+            })
 
-        if(guestIndex < 0)
-            throw new HttpException("This guest doesn't exist!", HttpStatus.NOT_FOUND)
+            if (!findGuest)
+                throw new HttpException("This guest doesn't exist!", HttpStatus.NOT_FOUND)
 
-        const guestItem = this.guests[guestIndex]
-
-        this.guests[guestIndex] = {
-            ...guestItem,
-            ...updateGuestDto
+            const guest = await this.prismaService.guest.update({
+                where: {
+                    id: findGuest.id
+                },
+                data: updateGuestDto
+            })
+            return guest
+        } catch(e){
+            throw new HttpException("Unable to update guest!", HttpStatus.BAD_REQUEST)
         }
-
-        return "Updated Guest!"
     }
 
-    remove(id: number){
-        const guestIndex = this.guests.findIndex(guest => guest.id === id)
+    async delete(id: number){
+        try{
+            const findGuest = await this.prismaService.guest.findFirst({
+                where: {
+                    id: id
+                }
+            })
 
-        if(guestIndex < 0)
-            throw new HttpException("This guest doesn't exist!", HttpStatus.NOT_FOUND)
+            if(!findGuest)
+                throw new HttpException("This guest doesn't exist!", HttpStatus.NOT_FOUND)
 
-        this.guests.splice(guestIndex, 1)
-
-        return "Deleted Guest!!"
+            await this.prismaService.guest.delete({
+                where: {
+                    id: findGuest.id
+                }
+            })
+            return "Deleted guest sucessfully!"
+        } catch(e){
+            throw new HttpException("Unable to delete guest!", HttpStatus.BAD_REQUEST)
+        }
     }
 }

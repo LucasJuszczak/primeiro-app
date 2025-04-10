@@ -2,14 +2,15 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query 
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('teachers')
 export class TeachersController {
     constructor(private readonly teachersService: TeachersService) {}
 
     @Get()
-    findAllTeachers(){
-        return this.teachersService.findAll()
+    findAllTeachers(@Query() paginationDto: PaginationDto){
+        return this.teachersService.findAll(paginationDto)
     }
 
     @Get(':id')
@@ -29,6 +30,6 @@ export class TeachersController {
 
     @Delete(':id')
     removeTeacher(@Param('id', ParseIntPipe) id: number){
-        return this.teachersService.remove(id)
+        return this.teachersService.delete(id)
     }
 }

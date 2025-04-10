@@ -4,4 +4,5 @@ export class Guest{
     name: string
     email: string
     presence: boolean
+    created?: Date
 }
