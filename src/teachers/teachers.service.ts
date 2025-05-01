@@ -65,7 +65,11 @@ export class TeachersService {
                 where: {
                     id: findTeacher.id
                 },
-                data: updateTeacherDto
+                data: {
+                    name: updateTeacherDto.name ? updateTeacherDto.name : findTeacher.name,
+                    registration: updateTeacherDto.registration ? updateTeacherDto.registration : findTeacher.registration,
+                    email: updateTeacherDto.email ? updateTeacherDto.email : findTeacher.email
+                }
             })
             return teacher
         } catch(e){

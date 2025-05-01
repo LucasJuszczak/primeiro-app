@@ -27,12 +27,18 @@ export class UsersService {
         const user = await this.prismaService.user.findFirst({
             where: {
                 id: id
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                task: true
             }
         })
 
-        if(user?.name) return user
+        if(user) return user
 
-        throw new HttpException("This user doesn't exist!", HttpStatus.NOT_FOUND)
+        throw new HttpException("User not found!", HttpStatus.NOT_FOUND)
     }
 
     async create(createUserDto: CreateUserDto){
@@ -41,6 +47,11 @@ export class UsersService {
                 data: {
                     name: createUserDto.name,
                     email: createUserDto.email
+                },
+                select:{
+                    id: true,
+                    name: true,
+                    email: true
                 }
             })
             return newUser
@@ -64,7 +75,14 @@ export class UsersService {
                 where: {
                     id: findUser.id
                 },
-                data: updateUserDto
+                data: {
+                    name: updateUserDto.name ? updateUserDto.name : findUser.name
+                },
+                select:{
+                    id: true,
+                    name: true,
+                    email: true
+                }
             })
             return user
         } catch(e){
@@ -81,7 +99,7 @@ export class UsersService {
             })
 
             if(!findUser)
-                throw new HttpException("This user doesn't exist!", HttpStatus.NOT_FOUND)
+                throw new HttpException("This user doesn't exist!", HttpStatus.BAD_REQUEST)
 
             await this.prismaService.user.delete({
                 where: {

@@ -16,7 +16,7 @@ export class UsersController {
 
     @Get(':id')
     findOneUser(@Param('id', ParseIntPipe) id: number){
-        return this.usersService.findOne(id)
+        return 'Buscando o usuário de id: ' + id
     }
 
     @Post()
