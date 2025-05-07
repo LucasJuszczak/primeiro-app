@@ -3,12 +3,14 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { PaginationDto } from "src/common/dto/pagination.dto";
+import { HashingServiceProtocol } from "src/auth/hash/hashing.service";
 
 
 @Injectable()
 export class UsersService {
 
-    constructor(private readonly prismaService: PrismaService){}
+    constructor(private readonly prismaService: PrismaService,
+                private readonly hashingService: HashingServiceProtocol) {}
 
     async findAll(paginationDto: PaginationDto){
         const {limit = 10, offset = 0} = paginationDto
@@ -46,6 +48,7 @@ export class UsersService {
             const newUser = await this.prismaService.user.create({
                 data: {
                     name: createUserDto.name,
+                    passwordHash: createUserDto.password,
                     email: createUserDto.email
                 },
                 select:{
@@ -71,12 +74,22 @@ export class UsersService {
             if (!findUser)
                 throw new HttpException("This user doesn't exist!", HttpStatus.NOT_FOUND)
 
+            const dataUser: { name?: string, passwordHash?: string } = {
+                name: updateUserDto.name ? updateUserDto.name : findUser.name
+            }
+
+            if (updateUserDto?.password){
+                const passwordHash = await this.hashingService.hash(updateUserDto?.password)
+                dataUser['passwordHash'] = passwordHash
+            }
+
             const user = await this.prismaService.user.update({
                 where: {
                     id: findUser.id
                 },
                 data: {
-                    name: updateUserDto.name ? updateUserDto.name : findUser.name
+                    name: dataUser.name,
+                    passwordHash: dataUser?.passwordHash ? dataUser?.passwordHash : findUser.passwordHash
                 },
                 select:{
                     id: true,
