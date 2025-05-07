@@ -26,10 +26,16 @@ export class GuestsService {
         const guest = await this.prismaService.guest.findFirst({
             where: {
                 id: id
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                teacher: true
             }
         })
 
-        if(guest?.name) return guest
+        if(guest) return guest
 
         throw new HttpException("This guest doesn't exist!", HttpStatus.NOT_FOUND)
     }

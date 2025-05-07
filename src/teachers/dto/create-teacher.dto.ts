@@ -1,4 +1,4 @@
-import { Contains, IsEmail, IsNotEmpty, IsString, MaxLength } from "class-validator"
+import { Contains, IsEmail, IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator"
 
 export class CreateTeacherDto{
     @IsString({message:"The name field must be text!"})
@@ -16,4 +16,8 @@ export class CreateTeacherDto{
     @IsNotEmpty({message:"The email field can't be empty!"})
     @MaxLength(40, {message:"The email field must have a maximum of 40 characters!"})
     readonly email: string
+
+    @IsNumber()
+    @IsNotEmpty()
+    readonly guestId: number
 }

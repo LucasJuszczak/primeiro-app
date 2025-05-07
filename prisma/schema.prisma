@@ -32,6 +32,8 @@ model Guest{
   presence Boolean
 
   created DateTime? @default(now())
+
+  teacher Teacher[]
 }
 
 model Teacher{
@@ -41,6 +43,9 @@ model Teacher{
   email String
 
   created DateTime? @default(now())
+
+  guestId Int?
+  guest Guest? @relation(fields: [guestId], references: [id], onDelete: Cascade)
 }
 
 model User{

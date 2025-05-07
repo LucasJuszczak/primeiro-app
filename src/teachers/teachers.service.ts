@@ -41,7 +41,8 @@ export class TeachersService {
                 data: {
                     name: createTeacherDto.name,
                     registration: createTeacherDto.registration,
-                    email: createTeacherDto.email
+                    email: createTeacherDto.email,
+                    guestId: createTeacherDto.guestId
                 }
             })
             return newTeacher

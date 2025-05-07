@@ -16,7 +16,7 @@ export class GuestsController {
 
     @Get(':id')
     findOneGuest(@Param('id', ParseIntPipe) id: number){
-        return this.guestsService.findOne(id)
+        return 'Buscando o convidado de id: ' + id
     }
 
     @Post()
@@ -25,7 +25,10 @@ export class GuestsController {
     }
 
     @Patch(':id')
-    updateGuest(@Param('id', ParseIntPipe) id: number, @Body() updateGuestDto: UpdateGuestDto){
+    updateGuest(
+        @Param('id', ParseIntPipe) id: number, 
+        @Body() updateGuestDto: UpdateGuestDto
+    ){
         return this.guestsService.update(id, updateGuestDto)
     }
 
